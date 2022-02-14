@@ -55,6 +55,7 @@
 #include <QWidget>
 #include <QElapsedTimer>
 #include <QTimer>
+#include <QVideoWidget>
 
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
@@ -102,6 +103,7 @@ private:
     qint64 timerCount = 0;
     qint64 previousePosition = 0;
     int thresholdTimerCount = 0;
+    QVideoWidget *videoWidget;
 };
 
 #endif

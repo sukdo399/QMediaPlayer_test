@@ -51,7 +51,6 @@
 #include "videoplayer.h"
 
 #include <QtWidgets>
-#include <QVideoWidget>
 
 VideoPlayer::VideoPlayer(bool waylandSink, int interval, bool autoRepeat, bool fullScreen, int threshold, QWidget *parent)
     : QWidget(parent)
@@ -61,11 +60,11 @@ VideoPlayer::VideoPlayer(bool waylandSink, int interval, bool autoRepeat, bool f
     autoPlayRepeat = autoRepeat;
     useFullScreen = fullScreen;
     thresholdTimerCount = threshold;
-    qWarning() << "waylandSink: " << useWaylandSink << ", playInterval: " << playInterval << ", autoPlayRepeat: " << autoPlayRepeat << ", fullScreen: " << useFullScreen << ", threshold: " << thresholdTimerCount;
+//    qWarning() << "waylandSink: " << useWaylandSink << ", playInterval: " << playInterval << ", autoPlayRepeat: " << autoPlayRepeat << ", fullScreen: " << useFullScreen << ", threshold: " << thresholdTimerCount;
 
     m_mediaPlayer = new QMediaPlayer(this, QMediaPlayer::VideoSurface);
 
-    QVideoWidget *videoWidget = new QVideoWidget;
+    videoWidget = new QVideoWidget;
     QAbstractButton *openButton = new QPushButton(tr("Open..."));
     connect(openButton, &QAbstractButton::clicked, this, &VideoPlayer::openFile);
 
@@ -129,9 +128,9 @@ VideoPlayer::~VideoPlayer()
 
 void VideoPlayer::timerCallback()
 {
-    qWarning() << "timer callback";
+//    qWarning() << "timer callback";
     if (timerCount > thresholdTimerCount) {
-        qWarning() << "=================================== receive the same position " << thresholdTimerCount << " times";
+//        qWarning() << "=================================== receive the same position " << thresholdTimerCount << " times";
         timerCount = 0;
         m_mediaPlayer->setMedia(originalUrl);
         playTimer->stop();
@@ -184,17 +183,19 @@ void VideoPlayer::setUrl(const QUrl &url)
 
 void VideoPlayer::play()
 {
-    qWarning() << __FUNCTION__ << m_mediaPlayer->state() << timer.nsecsElapsed() / 1000  / 1000;
+//    qWarning() << __FUNCTION__ << m_mediaPlayer->state() << timer.nsecsElapsed() / 1000  / 1000;
 
     if (mediaStatus != QMediaPlayer::BufferedMedia) {
-        qWarning() << "play ignored because mediaState: " << mediaStatus;
+//        qWarning() << "play ignored because mediaState: " << mediaStatus;
         return;
     }
     switch (m_mediaPlayer->state()) {
     case QMediaPlayer::PlayingState:
+        videoWidget->update();
         m_mediaPlayer->pause();
         break;
     default:
+        videoWidget->update();
         m_mediaPlayer->play();
         break;
     }
@@ -202,7 +203,7 @@ void VideoPlayer::play()
 
 void VideoPlayer::mediaStateChanged(QMediaPlayer::State state)
 {
-    qWarning() << __FUNCTION__ << state << timer.nsecsElapsed() / 1000 / 1000;
+//    qWarning() << __FUNCTION__ << state << timer.nsecsElapsed() / 1000 / 1000;
     switch(state) {
     case QMediaPlayer::PlayingState:
         m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
@@ -215,7 +216,7 @@ void VideoPlayer::mediaStateChanged(QMediaPlayer::State state)
 
 void VideoPlayer::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
-    qWarning() << __FUNCTION__ << status << timer.nsecsElapsed() / 1000  / 1000;
+//    qWarning() << __FUNCTION__ << status << timer.nsecsElapsed() / 1000  / 1000;
     mediaStatus = status;
     switch(status) {
     case QMediaPlayer::EndOfMedia:
